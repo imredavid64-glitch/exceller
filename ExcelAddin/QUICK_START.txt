@@ -1,0 +1,71 @@
+============================================
+EXCELLER - QUICK START
+============================================
+
+FASTEST METHOD - ONE CLICK (Windows)
+====================================
+
+1. Close Microsoft Excel (all windows)
+
+2. Double-click install.bat
+   - That's it. It builds the add-in, installs it, and
+     registers it so Excel loads it automatically.
+
+3. Excel opens automatically - Exceller is ready!
+
+4. Press Alt + F8 to see all Exceller commands
+
+
+WHAT HAPPENS WHEN YOU RUN install.bat
+=====================================
+
+1. The add-in (ExcelAssistant.xlam) is compiled automatically
+   from ExcelAssistant.bas - you never touch the VBA editor
+2. It's copied to: %APPDATA%\Microsoft\AddIns
+3. It's registered to load on every Excel start
+4. Excel is launched for you
+
+If you prefer, the installer can also be run from PowerShell:
+  powershell -ExecutionPolicy Bypass -File install.ps1
+
+
+COMMANDS YOU'LL HAVE
+====================
+
+Alt+F8 then select:
+- Exceller_Chat           Ask AI anything
+- Exceller_Analyze        Analyze selected data
+- Exceller_FixFormula     Fix broken formulas
+- Exceller_VerifyFormula  Check if formula works
+- Exceller_CreateTable    Make a formatted table
+- Exceller_SuggestPrice   Price calculation help
+- Exceller_GetFormulaHelp Get formula suggestions
+- Exceller_Settings       Change API key
+
+
+FIRST TIME SETUP
+================
+
+1. Press Alt+F8
+2. Select "Exceller_Settings"
+3. Click "Run"
+4. Enter your Gemini API key
+5. Click OK
+
+Get free API key: https://makersuite.google.com/app/apikey
+
+
+TROUBLESHOOTING
+================
+
+If "Macros disabled":
+- Close and reopen Excel (the installer already enables macros,
+  but a running Excel may not have picked it up)
+- Or: File > Options > Trust Center > Trust Center Settings
+- Macro Settings > Select "Enable all macros"
+
+If Alt+F8 shows nothing:
+- Close Excel and run install.bat again
+- Check the add-in is checked: File > Options > Add-ins > Go
+
+============================================

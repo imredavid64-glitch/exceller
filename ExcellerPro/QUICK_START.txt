@@ -1,0 +1,79 @@
+============================================
+     EXCELLER PRO - QUICK START GUIDE
+============================================
+
+INSTALL (2 minutes)
+====================
+
+1. Right-click "install.bat"
+2. Select "Run as administrator"
+3. Wait for "Installation Complete"
+4. Open Excel
+
+GET API KEY (1 minute)
+=======================
+
+1. Go to: https://makersuite.google.com/app/apikey
+2. Sign in with Google
+3. Click "Create API Key"
+4. Copy the key
+
+SETUP IN EXCEL
+================
+
+1. Open Excel
+2. Press Alt + F8
+3. Select "ExcellerPro_Settings"
+4. Click "Run"
+5. Paste your API key
+6. Click OK
+
+USE IT
+=======
+
+1. Select data in Excel
+2. Click a toolbar button:
+   - Ask AI      = Chat about your data
+   - Analyze     = Get insights
+   - Fix Formula = Repair broken formulas
+   - Price Calc  = Price help
+
+Or press Alt+F8 to see all commands.
+
+
+EXAMPLES
+=========
+
+Data Analysis:
+  "Summarize this data"
+  "Find duplicates"
+  "What trends do you see?"
+
+Formula Help:
+  "Write a SUMIF formula"
+  "Fix this #REF! error"
+  "Calculate running total"
+
+Price Calc:
+  "Add 10% discount"
+  "Calculate with tax"
+  "Look up price from list"
+
+
+TROUBLESHOOTING
+================
+
+"Macros disabled":
+  File > Options > Trust Center > Macro Settings
+  > Enable all macros
+
+"API Error":
+  Check internet connection
+  Verify API key is correct
+
+"Toolbar missing":
+  Press Alt+F8
+  Run ExcellerPro_Chat
+
+
+============================================

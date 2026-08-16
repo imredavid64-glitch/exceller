@@ -1,0 +1,85 @@
+============================================
+EXCELLER EXCEL ADD-IN - INSTALLATION GUIDE
+============================================
+
+ONE-CLICK INSTALL (Windows, ~30 seconds)
+=========================================
+
+1. Close Microsoft Excel (all windows)
+
+2. Double-click install.bat
+   - It automatically:
+     * Builds ExcelAssistant.xlam from ExcelAssistant.bas
+     * Copies it to your Excel AddIns folder
+     * Registers it so Excel loads it automatically
+   - No manual VBA steps, no running macros, no admin needed
+
+3. Excel opens automatically - Exceller is loaded!
+
+4. Press Alt + F8 to see all Exceller commands
+
+
+WHAT'S INSTALLED
+================
+
+- File: %APPDATA%\Microsoft\AddIns\ExcelAssistant.xlam
+- Loads automatically every time Excel starts
+- Remove any time: File > Options > Add-ins > Uncheck Exceller
+
+
+COMMANDS (Alt+F8)
+=================
+
+- Exceller_Chat          Ask questions
+- Exceller_Analyze       Analyze selected data
+- Exceller_FixFormula    Fix broken formulas
+- Exceller_VerifyFormula Verify formulas work
+- Exceller_CreateTable   Create formatted tables
+- Exceller_SuggestPrice  Price calculation help
+- Exceller_GetFormulaHelp Formula assistance
+- Exceller_Settings      Change API key
+
+
+FIRST TIME SETUP
+================
+
+1. Press Alt+F8
+2. Select "Exceller_Settings"
+3. Click "Run"
+4. Enter your Gemini API key
+5. Click OK
+
+Get free API key: https://makersuite.google.com/app/apikey
+
+
+HOW IT WORKS
+============
+
+- install.bat calls ExcellerInstaller\build_addin.vbs
+- That script drives Excel itself (COM automation) to compile the .xlam
+  from the VBA source, so you never have to open the VBA editor
+- It also enables "Trust access to the VBA project object model" and
+  "Enable all macros" in your Excel Trust Center settings automatically
+
+
+TROUBLESHOOTING
+================
+
+"Macros disabled" or add-in not loading:
+- The installer enables macros automatically, but if your Excel was
+  already open, close and reopen it
+- Check: File > Options > Trust Center > Trust Center Settings >
+  Macro Settings > Enable all macros
+
+"Could not access the VBA project":
+- Close ALL Excel windows and run install.bat again
+
+"Can't find AddIns folder":
+- Press Win+R, type: %APPDATA%\Microsoft\AddIns
+- Press Enter
+
+To uninstall:
+- File > Options > Add-ins > Uncheck Exceller
+- Delete ExcelAssistant.xlam from the AddIns folder
+
+============================================

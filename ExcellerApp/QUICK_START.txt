@@ -1,0 +1,56 @@
+================================================================================
+EXCELLER - QUICK START GUIDE
+================================================================================
+
+INSTALLATION (Windows)
+=======================
+1. Double-click "install.bat"
+2. Wait for installation to complete
+3. Double-click "run.bat" to start
+
+INSTALLATION (Manual)
+======================
+1. Open terminal/command prompt
+2. Navigate to ExcellerApp folder
+3. Run: python -m venv venv
+4. Run: venv\Scripts\activate (Windows)
+   Or: source venv/bin/activate (Mac/Linux)
+5. Run: pip install -r requirements.txt
+6. Run: python main.py
+
+GETTING STARTED
+===============
+1. App starts in system tray (bottom right corner)
+2. Click the floating assistant window
+3. Click "Browse" to load an Excel file
+4. Type questions or use quick action buttons
+
+QUICK ACTIONS
+=============
+📈 Analyze   - Get insights about your data
+🔍 Find Issues - Detect errors and problems
+📊 Statistics - Calculate key numbers
+🧹 Clean     - Get cleaning suggestions
+
+EXAMPLE PROMPTS
+===============
+"Summarize this data"
+"Find duplicates"
+"Write a SUM formula"
+"Create a chart"
+"Clean this data"
+"Explain this data"
+
+KEYBOARD SHORTCUTS
+===================
+Enter    - Send message
+Escape   - Minimize window
+
+TROUBLESHOOTING
+===============
+- Python not found: Install from python.org
+- Module error: Run install.bat again
+- No window: Check system tray icon
+- API error: Check internet connection
+
+================================================================================

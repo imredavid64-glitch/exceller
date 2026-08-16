@@ -1,0 +1,70 @@
+================================================================================
+EXCEL ASSISTANT - QUICK REFERENCE CARD
+================================================================================
+
+INSTALLATION
+============
+1. Open Excel
+2. Press Alt+F11 (VBA Editor)
+3. File > Import File
+4. Import: ExcelAssistant.bas, frmAssistant.frm
+5. Close VBA Editor (Alt+Q)
+6. Alt+F8 > SetupAssistant > Run
+
+FEATURES
+========
+AI Chat          - Ask questions, get help
+Analyze          - Get insights on selected data
+Create Table     - Format data professionally
+Check Files      - Analyze files in folders
+Settings         - Configure API key
+
+COMMON COMMANDS (Type in AI Chat)
+==================================
+"Summarize this data"
+"Find duplicates"
+"Create a pivot table"
+"Write a SUMIF formula for sales > 1000"
+"Clean this data"
+"Export to CSV"
+"Calculate average by category"
+"Create a chart from this data"
+"Highlight cells with errors"
+
+DATA ANALYSIS
+=============
+1. Select data range
+2. Click "Analyze"
+3. Get summary, insights, recommendations
+
+TABLE CREATION
+==============
+1. Select raw data
+3. Click "Create Table"
+3. Professional table created automatically
+
+FILE ANALYSIS
+=============
+1. Click "Check Files"
+2. Select folder
+3. Get file summary and recommendations
+
+TROUBLESHOOTING
+===============
+- Permission Error: Trust Center > Macro Settings > Enable all
+- API Error: Check internet connection and API key
+- Toolbar Missing: Run SetupAssistant again
+
+API KEY
+=======
+Get free key: https://makersuite.google.com/app/apikey
+Store in: Settings > API Key
+
+================================================================================
+SHORTCUTS
+=========
+Alt+F11    - Open VBA Editor
+Alt+F8     - Run Macros
+Alt+Q      - Close VBA Editor
+
+================================================================================

@@ -1,0 +1,62 @@
+============================================
+EXCELLER - PACKAGING & DISTRIBUTION GUIDE
+============================================
+
+QUICK BUILD (Windows)
+======================
+1. Double-click "build.bat"
+2. Wait 2-3 minutes
+3. Find "Exceller.exe" in dist/ folder
+4. Share the .exe file with others
+
+QUICK BUILD (Mac)
+===================
+1. Open Terminal
+2. Run: ./build.sh
+3. Wait 2-3 minutes
+4. Find "Exceller" in dist/ folder
+
+WHAT TO SHARE
+==============
+Share the entire "dist" folder with your app:
+- Exceller.exe (Windows) or Exceller (Mac)
+- No Python needed on other computers!
+
+INSTALL ON ANOTHER COMPUTER
+=============================
+Windows:
+1. Copy Exceller.exe to their computer
+2. Double-click to run
+3. No installation needed!
+
+Mac:
+1. Copy Exceller app to Applications
+2. Double-click to open
+3. First time: Right-click > Open (to bypass Gatekeeper)
+
+TROUBLESHOOTING
+================
+If "Python not found":
+- Install Python from python.org
+- Check "Add Python to PATH" during install
+
+If build fails:
+- Run: pip install --upgrade pyinstaller
+- Try: pyinstaller --clean main.py
+
+If app won't open on Mac:
+- Go to System Preferences > Security
+- Click "Open Anyway"
+
+FILE SIZES
+===========
+- Windows: ~15-25 MB
+- Mac: ~20-30 MB
+
+REQUIREMENTS FOR USERS
+=======================
+- Windows 10+ or Mac 10.13+
+- No Python needed
+- Internet connection for AI features
+
+============================================
