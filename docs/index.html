@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exceller — AI-Powered Excel Assistant</title>
+<meta name="description" content="Exceller brings AI to Excel: ask questions about your data, fix broken formulas, get insights, and more — right inside your spreadsheets.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234CAF50'/><text x='50' y='70' font-size='58' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>E</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-2: #0e1424;
+    --surface: #141b30;
+    --surface-2: #1a2238;
+    --border: rgba(255,255,255,.08);
+    --text: #e9edf6;
+    --muted: #93a1b8;
+    --green: #4CAF50;
+    --green-2: #45a049;
+    --green-glow: rgba(76,175,80,.35);
+    --blue: #2196F3;
+    --purple: #9C27B0;
+    --amber: #ff9800;
+    --red: #f44336;
+    --radius: 16px;
+    --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  ::selection { background: rgba(76,175,80,.35); }
+
+  /* ---------- background ---------- */
+  .bg-grid {
+    position: fixed; inset: 0; z-index: -2;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 30%, transparent 75%);
+  }
+  .orb {
+    position: fixed; border-radius: 50%; filter: blur(90px); z-index: -1; opacity: .5;
+    pointer-events: none;
+  }
+  .orb-1 { width: 480px; height: 480px; background: rgba(76,175,80,.22); top: -160px; left: -120px; }
+  .orb-2 { width: 420px; height: 420px; background: rgba(33,150,243,.16); top: 180px; right: -160px; }
+  .orb-3 { width: 380px; height: 380px; background: rgba(156,39,176,.12); bottom: -140px; left: 30%; }
+
+  /* ---------- nav ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    background: rgba(10,14,26,.75);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1160px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; text-decoration: none; color: var(--text); }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, #66bb6a, #2e7d32);
+    display: grid; place-items: center; font-weight: 800; color: #fff; font-size: 17px;
+    box-shadow: 0 4px 16px var(--green-glow);
+  }
+  .nav-links { display: flex; gap: 26px; margin-left: auto; align-items: center; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 14.5px; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--green); color: #fff !important; padding: 9px 18px; border-radius: 10px;
+    font-weight: 600; transition: background .2s, transform .2s;
+  }
+  .nav-cta:hover { background: var(--green-2); transform: translateY(-1px); }
+  .hamburger { display: none; background: none; border: 0; color: var(--text); font-size: 24px; cursor: pointer; margin-left: auto; }
+  @media (max-width: 860px) {
+    .nav-links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      flex-direction: column; gap: 6px; padding: 12px 24px 18px;
+      background: rgba(10,14,26,.97); border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+    .nav-links.open { display: flex; }
+    .hamburger { display: block; }
+    .nav-cta { margin-top: 6px; }
+  }
+
+  /* ---------- layout ---------- */
+  section { max-width: 1160px; margin: 0 auto; padding: 96px 24px; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--green); background: rgba(76,175,80,.1);
+    border: 1px solid rgba(76,175,80,.3); border-radius: 999px; padding: 6px 14px; margin-bottom: 18px;
+  }
+  h2 { font-size: clamp(28px, 4.2vw, 42px); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+  h2 .grad { background: linear-gradient(90deg, #66bb6a, #4dd0e1); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { color: var(--muted); font-size: 17px; max-width: 620px; margin-top: 14px; }
+  .center { text-align: center; }
+  .center .sub { margin-left: auto; margin-right: auto; }
+
+  /* ---------- hero ---------- */
+  .hero { padding-top: 84px; padding-bottom: 80px; display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+  .hero h1 {
+    font-size: clamp(34px, 5.4vw, 60px); font-weight: 800; line-height: 1.08; letter-spacing: -.03em;
+  }
+  .hero h1 .grad { background: linear-gradient(90deg, #66bb6a 10%, #4dd0e1 90%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p.lead { color: var(--muted); font-size: 18px; margin-top: 20px; max-width: 520px; }
+  .hero-ctas { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 26px; border-radius: 12px; font-weight: 700; font-size: 15.5px;
+    text-decoration: none; transition: transform .18s, box-shadow .18s, background .2s; cursor: pointer; border: 0;
+  }
+  .btn-primary { background: var(--green); color: #fff; box-shadow: 0 8px 30px var(--green-glow); }
+  .btn-primary:hover { background: var(--green-2); transform: translateY(-2px); box-shadow: 0 12px 36px var(--green-glow); }
+  .btn-ghost { background: rgba(255,255,255,.04); color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: rgba(255,255,255,.08); transform: translateY(-2px); }
+  .hero-badges { display: flex; gap: 22px; margin-top: 34px; flex-wrap: wrap; }
+  .hero-badge { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 13.5px; font-weight: 500; }
+  .hero-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green-glow); }
+
+  /* app mockup */
+  .mock-wrap { position: relative; }
+  .mock {
+    position: relative; width: min(100%, 400px); margin: 0 auto;
+    background: linear-gradient(160deg, #171f38, #10162a);
+    border: 1px solid var(--border); border-radius: 22px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.02);
+    overflow: hidden;
+  }
+  .mock-titlebar { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .mock-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .mock-dot.r { background: #ff5f57; } .mock-dot.y { background: #febc2e; } .mock-dot.g { background: #28c840; }
+  .mock-title { margin-left: 10px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+  .mock-file { display: flex; align-items: center; gap: 10px; margin: 12px 14px 0; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+  .mock-file .icon { font-size: 18px; }
+  .mock-file .name { font-size: 12.5px; font-weight: 600; }
+  .mock-file .stats { font-size: 11px; color: var(--muted); }
+  .mock-file .browse { margin-left: auto; font-size: 11px; color: var(--green); font-weight: 700; background: rgba(76,175,80,.12); border: 1px solid rgba(76,175,80,.35); padding: 4px 10px; border-radius: 7px; }
+  .mock-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 12px 14px 0; }
+  .mock-act { text-align: center; padding: 8px 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 10.5px; font-weight: 600; color: var(--muted); }
+  .mock-act .e { display: block; font-size: 15px; margin-bottom: 3px; }
+  .mock-chat { display: flex; flex-direction: column; gap: 9px; padding: 14px; min-height: 190px; }
+  .bubble { max-width: 82%; padding: 9px 12px; border-radius: 12px; font-size: 12px; line-height: 1.45; }
+  .bubble.user { align-self: flex-end; background: var(--green); color: #fff; border-bottom-right-radius: 4px; }
+  .bubble.ai { align-self: flex-start; background: #232c47; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+  .bubble.ai .muted { color: var(--muted); }
+  .mock-input { display: flex; gap: 8px; padding: 0 14px 14px; }
+  .mock-input .field { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: var(--muted); }
+  .mock-input .send { width: 38px; height: 38px; border-radius: 10px; background: var(--green); color: #fff; display: grid; place-items: center; font-size: 16px; }
+  .float-chip {
+    position: absolute; display: flex; align-items: center; gap: 8px;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 9px 13px; font-size: 12px; font-weight: 600;
+    box-shadow: 0 12px 34px rgba(0,0,0,.45);
+    animation: float 5s ease-in-out infinite;
+  }
+  .float-chip small { display: block; color: var(--muted); font-weight: 500; font-size: 10.5px; }
+  .chip-1 { top: -22px; right: -6px; animation-delay: 0s; }
+  .chip-2 { bottom: 58px; left: -46px; animation-delay: 1.6s; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+
+  /* toolbar strip */
+  .toolbar {
+    margin-top: 22px; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px;
+  }
+  .toolbar .tb-btn { font-size: 11.5px; font-weight: 600; color: var(--muted); padding: 6px 12px; border-radius: 8px; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 6px; }
+  .toolbar .tb-btn.hot { color: var(--text); background: rgba(76,175,80,.12); border-color: rgba(76,175,80,.3); }
+
+  /* ---------- features ---------- */
+  .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 46px; }
+  .feat {
+    background: linear-gradient(165deg, var(--surface), rgba(20,27,48,.6));
+    border: 1px solid var(--border); border-radius: var(--radius); padding: 26px;
+    transition: transform .2s, border-color .2s, box-shadow .2s; position: relative; overflow: hidden;
+  }
+  .feat:hover { transform: translateY(-5px); border-color: rgba(76,175,80,.4); box-shadow: 0 18px 44px rgba(0,0,0,.4); }
+  .feat .icon {
+    width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; font-size: 21px;
+    margin-bottom: 16px; background: rgba(76,175,80,.12); border: 1px solid rgba(76,175,80,.3);
+  }
+  .feat:nth-child(2) .icon, .feat:nth-child(5) .icon { background: rgba(33,150,243,.12); border-color: rgba(33,150,243,.35); }
+  .feat:nth-child(3) .icon, .feat:nth-child(6) .icon { background: rgba(156,39,176,.12); border-color: rgba(156,39,176,.35); }
+  .feat h3 { font-size: 17.5px; font-weight: 700; margin-bottom: 8px; }
+  .feat p { color: var(--muted); font-size: 14.5px; }
+  .feat .tag { display: inline-block; margin-top: 12px; font-size: 11.5px; font-weight: 600; color: var(--green); }
+  @media (max-width: 900px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .feat-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- products ---------- */
+  .prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 46px; }
+  .prod {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 30px;
+    position: relative; overflow: hidden;
+  }
+  .prod::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--green), #4dd0e1); opacity: .7; }
+  .prod h3 { font-size: 21px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+  .prod .os { font-size: 12px; color: var(--green); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin: 4px 0 14px; }
+  .prod ul { list-style: none; margin-top: 6px; }
+  .prod li { color: var(--muted); font-size: 14.5px; padding: 6px 0 6px 26px; position: relative; }
+  .prod li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+  .prod .btn { margin-top: 22px; }
+  @media (max-width: 820px) { .prod-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- how it works ---------- */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 46px; counter-reset: step; }
+  .step {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; position: relative;
+  }
+  .step::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; top: -16px; right: 20px;
+    font-size: 54px; font-weight: 800; color: rgba(76,175,80,.16); font-family: var(--mono);
+  }
+  .step h3 { font-size: 16.5px; font-weight: 700; margin-bottom: 8px; }
+  .step p { color: var(--muted); font-size: 14px; }
+  .step .code {
+    font-family: var(--mono); font-size: 12.5px; color: #9fe8a3; background: rgba(76,175,80,.1);
+    border: 1px solid rgba(76,175,80,.25); padding: 2px 8px; border-radius: 6px; white-space: nowrap;
+  }
+  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } .step::before { top: 6px; right: 14px; font-size: 40px; } }
+
+  /* ---------- commands ---------- */
+  .cmds { margin-top: 46px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .cmd {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px;
+    transition: border-color .2s, transform .2s;
+  }
+  .cmd:hover { border-color: rgba(76,175,80,.4); transform: translateX(4px); }
+  .cmd .k { font-family: var(--mono); font-size: 12px; color: var(--green); background: rgba(76,175,80,.1); border: 1px solid rgba(76,175,80,.3); border-radius: 7px; padding: 4px 9px; white-space: nowrap; }
+  .cmd .t { font-size: 14px; color: var(--muted); }
+  @media (max-width: 720px) { .cmds { grid-template-columns: 1fr; } }
+
+  /* ---------- setup / api ---------- */
+  .setup { background: linear-gradient(165deg, rgba(76,175,80,.07), transparent); border: 1px solid rgba(76,175,80,.22); border-radius: 22px; padding: 40px; margin-top: 40px; }
+  .setup ol { margin: 22px 0 0 22px; display: grid; gap: 14px; }
+  .setup li { color: var(--muted); font-size: 15px; padding-left: 6px; }
+  .setup li strong { color: var(--text); }
+  .setup .mono { font-family: var(--mono); font-size: 13px; color: #9fe8a3; background: rgba(76,175,80,.1); border: 1px solid rgba(76,175,80,.25); padding: 2px 8px; border-radius: 6px; }
+
+  /* ---------- faq ---------- */
+  .faq { max-width: 780px; margin: 46px auto 0; }
+  .faq-item { border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; background: var(--surface); overflow: hidden; }
+  .faq-q {
+    width: 100%; text-align: left; background: none; border: 0; color: var(--text);
+    padding: 18px 22px; font-size: 16px; font-weight: 600; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: var(--font);
+  }
+  .faq-q .chev { transition: transform .25s; color: var(--green); font-size: 14px; }
+  .faq-item.open .chev { transform: rotate(180deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+  .faq-item.open .faq-a { max-height: 400px; }
+  .faq-a p { padding: 0 22px 20px; color: var(--muted); font-size: 14.5px; }
+
+  /* ---------- cta band ---------- */
+  .cta-band {
+    text-align: center; position: relative; overflow: hidden;
+    border: 1px solid rgba(76,175,80,.3); border-radius: 26px;
+    background: radial-gradient(ellipse 80% 120% at 50% 120%, rgba(76,175,80,.22), transparent 60%), var(--surface);
+    padding: 70px 24px;
+  }
+  .cta-band h2 { font-size: clamp(26px, 4vw, 40px); }
+  .cta-band p { color: var(--muted); max-width: 520px; margin: 14px auto 0; font-size: 16px; }
+  .cta-band .hero-ctas { justify-content: center; }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 1px solid var(--border); padding: 40px 24px; }
+  .foot-inner { max-width: 1160px; margin: 0 auto; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .foot-inner .copy { color: var(--muted); font-size: 13.5px; }
+  .foot-inner .links { margin-left: auto; display: flex; gap: 22px; }
+  .foot-inner a { color: var(--muted); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color .2s; display: inline-flex; align-items: center; gap: 7px; }
+  .foot-inner a:hover { color: var(--text); }
+  .foot-inner svg { width: 16px; height: 16px; fill: currentColor; }
+
+  /* reveal animation */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding-top: 56px; gap: 48px; text-align: center; }
+    .hero p.lead { margin-left: auto; margin-right: auto; }
+    .hero-ctas, .hero-badges { justify-content: center; }
+    .mock-wrap { order: -1; }
+    .chip-2 { left: -10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ================= NAV ================= -->
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#top"><span class="brand-mark">E</span> Exceller</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="#features">Features</a>
+      <a href="#products">Products</a>
+      <a href="#how">How it works</a>
+      <a href="#setup">API Key</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://github.com/imredavid64-glitch/exceller" target="_blank" rel="noopener">GitHub</a>
+      <a class="nav-cta" href="#how">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top" style="max-width:1160px;margin:0 auto;padding-left:24px;padding-right:24px;">
+  <div>
+    <span class="kicker">⚡ AI-powered Excel assistant</span>
+    <h1>Excel, but with <span class="grad">AI superpowers</span></h1>
+    <p class="lead">Exceller turns plain-English questions into insights, formulas, and clean data — right inside your spreadsheets. Ask anything about your data and get answers instantly.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="#how">Get started free</a>
+      <a class="btn btn-ghost" href="https://github.com/imredavid64-glitch/exceller" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        View on GitHub
+      </a>
+    </div>
+    <div class="hero-badges">
+      <span class="hero-badge"><span class="dot"></span> Microsoft Excel 2016+</span>
+      <span class="hero-badge"><span class="dot"></span> Windows · macOS · Linux</span>
+      <span class="hero-badge"><span class="dot"></span> Powered by Google Gemini</span>
+      <span class="hero-badge"><span class="dot"></span> Free &amp; open source</span>
+    </div>
+  </div>
+
+  <div class="mock-wrap">
+    <div class="float-chip chip-1">📈 <span>Insights found<small>+23% trend detected</small></span></div>
+    <div class="mock">
+      <div class="mock-titlebar">
+        <span class="mock-dot r"></span><span class="mock-dot y"></span><span class="mock-dot g"></span>
+        <span class="mock-title">Exceller — AI Excel Assistant</span>
+      </div>
+      <div class="mock-file">
+        <span class="icon">📁</span>
+        <div><div class="name">sales_2026.xlsx</div><div class="stats">3 sheets · 1,240 rows · 9 columns</div></div>
+        <span class="browse">Browse</span>
+      </div>
+      <div class="mock-actions">
+        <div class="mock-act"><span class="e">📈</span>Analyze</div>
+        <div class="mock-act"><span class="e">🔍</span>Find Issues</div>
+        <div class="mock-act"><span class="e">📊</span>Stats</div>
+        <div class="mock-act"><span class="e">🧹</span>Clean</div>
+      </div>
+      <div class="mock-chat">
+        <div class="bubble ai"><span class="muted">Which region grew the most last quarter?</span></div>
+        <div class="bubble user">📊 EMEA grew <b>23%</b>, led by France. <span class="muted">Try: =SUMIFS(Sales, Region, "EMEA")</span></div>
+      </div>
+      <div class="mock-input"><span class="field">Ask about your data…</span><span class="send">→</span></div>
+    </div>
+    <div class="float-chip chip-2">🔧 <span>Formula fixed<small>#REF! → =XLOOKUP(…)</small></span></div>
+  </div>
+</header>
+
+<!-- toolbar strip -->
+<div style="max-width:1160px;margin:-30px auto 0;padding:0 24px;">
+  <div class="toolbar">
+    <span style="font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;display:inline-flex;align-items:center;padding:0 8px;">Excel add-in</span>
+    <span class="tb-btn hot">💬 Ask AI</span>
+    <span class="tb-btn">📈 Analyze</span>
+    <span class="tb-btn">🔧 Fix Formula</span>
+    <span class="tb-btn">💰 Price Calc</span>
+    <span class="tb-btn">✅ Verify</span>
+    <span class="tb-btn">📝 Create Table</span>
+    <span class="tb-btn">⚙️ Settings</span>
+  </div>
+</div>
+
+<!-- ================= FEATURES ================= -->
+<section id="features">
+  <div class="center reveal">
+    <span class="kicker">Features</span>
+    <h2>Everything you need, <span class="grad">in plain English</span></h2>
+    <p class="sub">Stop Googling formulas. Just describe what you want — Exceller does the rest.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat reveal"><div class="icon">💬</div><h3>AI Chat</h3><p>Ask questions about your data conversationally. "Summarize this sheet", "find duplicates", "what trends do you see?" — get clear, actionable answers.</p><span class="tag">Works on any selection</span></div>
+    <div class="feat reveal"><div class="icon">📈</div><h3>Data Analysis</h3><p>One click for insights, statistics, anomalies, and recommendations. Exceller reads your selection and tells you what's actually going on.</p><span class="tag">Context-aware</span></div>
+    <div class="feat reveal"><div class="icon">🔧</div><h3>Fix Formula</h3><p>Paste a broken formula and its error — #REF!, #VALUE!, #N/A — and get working alternatives with explanations of why they fix it.</p><span class="tag">3+ alternatives each time</span></div>
+    <div class="feat reveal"><div class="icon">💰</div><h3>Price Calculator</h3><p>Describe a pricing scenario and compare multiple calculation approaches — SUMPRODUCT, lookups, LAMBDA, and more — with pros and cons.</p><span class="tag">Compare approaches</span></div>
+    <div class="feat reveal"><div class="icon">✅</div><h3>Verify Formula</h3><p>Check whether a formula or VBA snippet is correct, with a confidence score, edge-case checks, and a corrected version when needed.</p><span class="tag">Confidence scoring</span></div>
+    <div class="feat reveal"><div class="icon">📝</div><h3>Smart Tables</h3><p>Turn raw selections into professionally formatted tables with suggested headers, formatting, and useful calculations.</p><span class="tag">Instant formatting</span></div>
+  </div>
+</section>
+
+<!-- ================= PRODUCTS ================= -->
+<section id="products">
+  <div class="center reveal">
+    <span class="kicker">Two ways to use it</span>
+    <h2>Pick your <span class="grad">superpower</span></h2>
+    <p class="sub">Exceller works as a floating desktop assistant or as a native Excel add-in — or both.</p>
+  </div>
+  <div class="prod-grid">
+    <div class="prod reveal">
+      <h3>💻 Exceller Desktop App</h3>
+      <div class="os">Windows · macOS · Linux</div>
+      <ul>
+        <li>Floating, always-on-top assistant that works alongside Excel</li>
+        <li>Drag &amp; drop any Excel file to start analyzing</li>
+        <li>Auto-detects changes to your files</li>
+        <li>One-click quick actions: analyze, find issues, stats, clean</li>
+        <li>Runs quietly in the system tray</li>
+        <li>Modern dark theme, PyQt6-powered</li>
+      </ul>
+      <a class="btn btn-primary" href="#how">Install the app</a>
+    </div>
+    <div class="prod reveal">
+      <h3>📊 Exceller Excel Add-in</h3>
+      <div class="os">Windows Excel 2016+</div>
+      <ul>
+        <li>One-click installer — compiles and registers itself into Excel</li>
+        <li>Native toolbar with every command one click away</li>
+        <li>Works with your selected cells for real context</li>
+        <li>Chat, analyze, fix formulas, verify, create tables</li>
+        <li>Auto-loads every time Excel starts</li>
+        <li>Alt+F8 gives you the full command list</li>
+      </ul>
+      <a class="btn btn-primary" href="#how">Install the add-in</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section id="how">
+  <div class="center reveal">
+    <span class="kicker">Quick start</span>
+    <h2>Up and running in <span class="grad">under a minute</span></h2>
+    <p class="sub">No VBA knowledge. No manual import. No running code by hand.</p>
+  </div>
+  <div class="steps">
+    <div class="step reveal">
+      <h3>1. Grab the files</h3>
+      <p>Clone the repo from GitHub, or download the folder you need — <b>ExcellerApp</b> for the desktop app, <b>ExcelAddin</b> for the Excel add-in.</p>
+    </div>
+    <div class="step reveal">
+      <h3>2. Run the installer</h3>
+      <p>Double-click <span class="code">install.bat</span>. It compiles the add-in for you, installs it into Excel, and registers it to auto-load — you never touch the VBA editor.</p>
+    </div>
+    <div class="step reveal">
+      <h3>3. Start asking</h3>
+      <p>Excel opens with Exceller ready. Select data, click a button or press <span class="code">Alt+F8</span>, and start asking questions.</p>
+    </div>
+  </div>
+
+  <div class="center reveal" style="margin-top:64px;">
+    <span class="kicker">Add-in commands</span>
+    <h2 style="font-size:clamp(24px,3.4vw,32px);">Everything at your fingertips</h2>
+  </div>
+  <div class="cmds">
+    <div class="cmd reveal"><span class="k">Exceller_Chat</span><span class="t">Ask anything about your data</span></div>
+    <div class="cmd reveal"><span class="k">Exceller_Analyze</span><span class="t">Get insights from the selected range</span></div>
+    <div class="cmd reveal"><span class="k">Exceller_FixFormula</span><span class="t">Repair broken formulas</span></div>
+    <div class="cmd reveal"><span class="k">Exceller_VerifyFormula</span><span class="t">Check if a formula is correct</span></div>
+    <div class="cmd reveal"><span class="k">Exceller_CreateTable</span><span class="t">Format data as a professional table</span></div>
+    <div class="cmd reveal"><span class="k">Exceller_SuggestPrice</span><span class="t">Price calculation help</span></div>
+    <div class="cmd reveal"><span class="k">Exceller_GetFormulaHelp</span><span class="t">Formula suggestions on demand</span></div>
+    <div class="cmd reveal"><span class="k">Exceller_Settings</span><span class="t">Set your Gemini API key</span></div>
+  </div>
+</section>
+
+<!-- ================= API KEY ================= -->
+<section id="setup">
+  <div class="center reveal">
+    <span class="kicker">Setup</span>
+    <h2>Connect your <span class="grad">Gemini API key</span></h2>
+    <p class="sub">Exceller is powered by Google Gemini. Keys are free, stored locally, and never shared.</p>
+  </div>
+  <div class="setup reveal">
+    <ol>
+      <li><strong>Get a free key</strong> from Google AI Studio — <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:var(--green);">aistudio.google.com/app/apikey</a></li>
+      <li><strong>Desktop app:</strong> set the <span class="mono">GEMINI_API_KEY</span> environment variable, or pass it to <span class="mono">AIEngine(api_key=…)</span></li>
+      <li><strong>Excel add-in:</strong> run <span class="mono">Exceller_Settings</span> (Alt+F8) and paste your key — it's stored in the Windows registry</li>
+      <li>That's it. Start chatting with your data 🎉</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq">
+  <div class="center reveal">
+    <span class="kicker">FAQ</span>
+    <h2>Questions, <span class="grad">answered</span></h2>
+  </div>
+  <div class="faq">
+    <div class="faq-item reveal">
+      <button class="faq-q">Is Exceller really free? <span class="chev">▼</span></button>
+      <div class="faq-a"><p>Yes. Exceller is free and open source (MIT license). You only pay Google for Gemini API usage if you exceed the free tier, and most personal use stays well within it.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">Where does my data go? <span class="chev">▼</span></button>
+      <div class="faq-a"><p>Your files stay on your computer. Data is only sent to Google's Gemini API when you ask a question, and only the context you explicitly selected. There's no tracking, no telemetry, no data collection.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">Do I need to know VBA? <span class="chev">▼</span></button>
+      <div class="faq-a"><p>Not at all. The one-click installer compiles the add-in for you and registers it with Excel automatically. You never open the VBA editor or run code by hand.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">Does it work on Mac? <span class="chev">▼</span></button>
+      <div class="faq-a"><p>The desktop app runs on Windows, macOS, and Linux. The Excel add-in is currently Windows-only (Excel for Mac doesn't support automated add-in installation).</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">Excel says macros are disabled. <span class="chev">▼</span></button>
+      <div class="faq-a"><p>The installer enables macros automatically. If Excel was already open during install, just close and reopen it. You can also check File → Options → Trust Center → Macro Settings → "Enable all macros".</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">What can I actually ask it? <span class="chev">▼</span></button>
+      <div class="faq-a"><p>Anything about your data: "Summarize this sales data", "find duplicates in column A", "write a formula to total by month", "fix this #REF! error", "create a pivot table by region", "generate a chart for this data".</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section>
+  <div class="cta-band reveal">
+    <span class="kicker">Get started</span>
+    <h2>Ready to work <span class="grad">smarter</span> in Excel?</h2>
+    <p>Install Exceller in under a minute and let AI handle the busywork.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="https://github.com/imredavid64-glitch/exceller" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        Get it on GitHub
+      </a>
+      <a class="btn btn-ghost" href="#how">How to install</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="foot-inner">
+    <a class="brand" href="#top"><span class="brand-mark">E</span> Exceller</a>
+    <span class="copy">© 2026 Exceller · Free &amp; open source · MIT License</span>
+    <div class="links">
+      <a href="https://github.com/imredavid64-glitch/exceller" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+      <a href="mailto:support@exceller.app">support@exceller.app</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
+  });
+
+  // Reveal on scroll (with a safety net so content is never stuck hidden)
+  const revealEls = document.querySelectorAll('.reveal');
+  const showAll = () => revealEls.forEach(el => el.classList.add('visible'));
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => observer.observe(el));
+    // Fallback: if the observer never fires (e.g. background tabs, iframes,
+    // reduced-motion environments), reveal everything after a moment.
+    setTimeout(showAll, 2500);
+  } else {
+    showAll();
+  }
+</script>
+</body>
+</html>
