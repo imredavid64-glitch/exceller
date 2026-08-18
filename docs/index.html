@@ -318,8 +318,8 @@
       <a href="#how">How it works</a>
       <a href="#setup">API Key</a>
       <a href="#faq">FAQ</a>
-      <a href="https://github.com/imredavid64-glitch/exceller" target="_blank" rel="noopener">GitHub</a>
-      <a class="nav-cta" href="#how">Get Started</a>
+      <a href="#download">Download</a>
+      <a class="nav-cta" href="#download">Get Started</a>
     </div>
   </div>
 </nav>
@@ -331,11 +331,8 @@
     <h1>Excel, but with <span class="grad">AI superpowers</span></h1>
     <p class="lead">Exceller turns plain-English questions into insights, formulas, and clean data — right inside your spreadsheets. Ask anything about your data and get answers instantly.</p>
     <div class="hero-ctas">
-      <a class="btn btn-primary" href="#how">Get started free</a>
-      <a class="btn btn-ghost" href="https://github.com/imredavid64-glitch/exceller" target="_blank" rel="noopener">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        View on GitHub
-      </a>
+      <a class="btn btn-primary" href="downloads/Exceller-Addin-Windows.zip">⬇ Install the free add-in</a>
+      <a class="btn btn-ghost" href="downloads/Exceller-Desktop-Windows.zip">Download the desktop app</a>
     </div>
     <div class="hero-badges">
       <span class="hero-badge"><span class="dot"></span> Microsoft Excel 2016+</span>
@@ -423,7 +420,7 @@
         <li>Runs quietly in the system tray</li>
         <li>Modern dark theme, PyQt6-powered</li>
       </ul>
-      <a class="btn btn-primary" href="#how">Install the app</a>
+      <a class="btn btn-primary" href="downloads/Exceller-Desktop-Windows.zip">Download for Windows</a>
     </div>
     <div class="prod reveal">
       <h3>📊 Exceller Excel Add-in</h3>
@@ -436,7 +433,7 @@
         <li>Auto-loads every time Excel starts</li>
         <li>Alt+F8 gives you the full command list</li>
       </ul>
-      <a class="btn btn-primary" href="#how">Install the add-in</a>
+      <a class="btn btn-primary" href="downloads/Exceller-Addin-Windows.zip">Download the add-in</a>
     </div>
   </div>
 </section>
@@ -451,7 +448,7 @@
   <div class="steps">
     <div class="step reveal">
       <h3>1. Grab the files</h3>
-      <p>Clone the repo from GitHub, or download the folder you need — <b>ExcellerApp</b> for the desktop app, <b>ExcelAddin</b> for the Excel add-in.</p>
+      <p>Click <b>Download the add-in</b> above and unzip the folder anywhere — <b>no code, no GitHub, no Python</b> needed.</p>
     </div>
     <div class="step reveal">
       <h3>2. Run the installer</h3>
@@ -492,6 +489,36 @@
       <li><strong>Desktop app:</strong> set the <span class="mono">GEMINI_API_KEY</span> environment variable, or pass it to <span class="mono">AIEngine(api_key=…)</span></li>
       <li><strong>Excel add-in:</strong> run <span class="mono">Exceller_Settings</span> (Alt+F8) and paste your key — it's stored in the Windows registry</li>
       <li>That's it. Start chatting with your data 🎉</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= DOWNLOAD ================= -->
+<section id="download">
+  <div class="center reveal">
+    <span class="kicker">Free download</span>
+    <h2>Install in <span class="grad">under a minute</span></h2>
+    <p class="sub">No coding. No GitHub. No Python. Download, unzip, double-click — done.</p>
+  </div>
+  <div class="feat-grid" style="grid-template-columns:repeat(2,1fr);">
+    <div class="feat reveal" style="text-align:center;">
+      <div class="icon" style="margin:0 auto 16px;">📊</div>
+      <h3>Excel Add-in <span style="color:#4CAF50;font-size:12px;">(recommended)</span></h3>
+      <p>Native toolbar inside Excel. Compiles &amp; registers itself — uses Windows built-in tools, no Python required.</p>
+      <a class="btn btn-primary" style="margin-top:20px;" href="downloads/Exceller-Addin-Windows.zip">⬇ Download add-in · 8 KB</a>
+    </div>
+    <div class="feat reveal" style="text-align:center;">
+      <div class="icon" style="margin:0 auto 16px;">💻</div>
+      <h3>Desktop App</h3>
+      <p>Floating AI assistant that works alongside Excel. Includes the app, one-click install.bat and run.bat.</p>
+      <a class="btn btn-primary" style="margin-top:20px;" href="downloads/Exceller-Desktop-Windows.zip">⬇ Download app · 44 KB</a>
+    </div>
+  </div>
+  <div class="setup reveal">
+    <ol>
+      <li><strong>Windows users:</strong> unzip the downloaded folder, then double-click <span class="mono">install.bat</span> and follow the prompts.</li>
+      <li><strong>Desktop app only:</strong> it also needs <strong>Python 3.8+</strong> (free from <a href="https://www.python.org/downloads/" target="_blank" rel="noopener" style="color:var(--green);">python.org</a>) — tick "Add to PATH" when installing.</li>
+      <li><strong>Mac / Linux:</strong> grab the source from <a href="https://github.com/imredavid64-glitch/exceller" target="_blank" rel="noopener" style="color:var(--green);">GitHub</a> and run the Python app.</li>
     </ol>
   </div>
 </section>
@@ -537,11 +564,8 @@
     <h2>Ready to work <span class="grad">smarter</span> in Excel?</h2>
     <p>Install Exceller in under a minute and let AI handle the busywork.</p>
     <div class="hero-ctas">
-      <a class="btn btn-primary" href="https://github.com/imredavid64-glitch/exceller" target="_blank" rel="noopener">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        Get it on GitHub
-      </a>
-      <a class="btn btn-ghost" href="#how">How to install</a>
+      <a class="btn btn-primary" href="downloads/Exceller-Addin-Windows.zip">⬇ Download for Windows</a>
+      <a class="btn btn-ghost" href="#download">See all downloads</a>
     </div>
   </div>
 </section>
@@ -552,6 +576,7 @@
     <a class="brand" href="#top"><span class="brand-mark">E</span> Exceller</a>
     <span class="copy">© 2026 Exceller · Free &amp; open source · MIT License</span>
     <div class="links">
+      <a href="downloads/Exceller-Addin-Windows.zip">⬇ Download</a>
       <a href="https://github.com/imredavid64-glitch/exceller" target="_blank" rel="noopener">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         GitHub
